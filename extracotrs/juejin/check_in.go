@@ -12,13 +12,14 @@ import (
 
 const (
 	appName = "掘金"
-	host    = "https://api.juejin.cn/"
+	host    = "https://api.juejin.cn"
 	referer = "https://juejin.cn/"
 )
 
 var apis = map[string]string{
-	"today_status": "growth_api/v1/get_today_status",
-	"check_in":     "growth_api/v1/check_in" + "?_signature=" + global.Config.JueJin.Signature,
+	"today_status": "/growth_api/v1/get_today_status",
+	"lottery_draw": "/growth_api/v1/lottery/draw",
+	"check_in":     "/growth_api/v1/check_in" + "?_signature=" + global.Config.JueJin.Signature,
 }
 
 type Client struct {
@@ -54,19 +55,12 @@ func GetCheckInStatus() bool {
 	_, body, errs := client.Struct(&resp)
 	fmt.Println(string(body))
 	fmt.Println(errs)
-	fmt.Println(resp.Data)
 	status, ok := resp.Data.(bool)
 	if ok && status {
 		notification.SendPushPlus("【"+appName+"】签到状态", "您今天已经签过到了")
-	} else {
-		notification.SendPushPlus("【"+appName+"】签到状态", "您今天还未签到")
 	}
 
 	return status
-}
-
-func GetCheckInCount() {
-
 }
 
 func CheckIn() {
@@ -86,17 +80,18 @@ func CheckIn() {
 	}
 
 	var resp Response
-	resp.Data = CheckInData{}
+	resp.Data = new(CheckInData)
 
 	_, body, errs := client.Struct(&resp)
 	fmt.Println(string(body))
 	fmt.Println(errs)
-	fmt.Println(resp.Data)
-	data, ok := resp.Data.(CheckInData)
+	// fmt.Println(resp.Data)
+	data, ok := resp.Data.(*CheckInData)
 
 	if ok && resp.ErrNo == 0 {
 		content := "新增矿石: " + strconv.Itoa(data.IncrPoint) + "，当前矿石数: " + strconv.Itoa(data.SumPoint)
 		notification.SendPushPlus("【"+appName+"】签到成功", content)
+		LotteryDraw()
 	} else {
 		content := resp.ErrMsg
 		switch resp.ErrNo {
@@ -104,5 +99,37 @@ func CheckIn() {
 			content += "，请更新 cookie 后再执行。"
 		}
 		notification.SendPushPlus("【"+appName+"】签到失败", content)
+	}
+}
+
+func LotteryDraw() {
+	client := NewClient()
+	req := client.Request()
+	req.Header.SetMethod(fiber.MethodPost)
+	req.SetRequestURI(host + apis["lottery_draw"])
+
+	if err := client.Parse(); err != nil {
+		panic(err)
+	}
+
+	var resp Response
+	resp.Data = new(LotteryDrawData)
+
+	_, body, errs := client.Struct(&resp)
+	fmt.Println(string(body))
+	fmt.Println(errs)
+	// fmt.Println(resp.Data)
+	data, ok := resp.Data.(*LotteryDrawData)
+
+	if ok && resp.ErrNo == 0 {
+		content := "奖品: " + data.LotteryName
+		notification.SendPushPlus("【"+appName+"】抽奖成功", content)
+	} else {
+		content := resp.ErrMsg
+		switch resp.ErrNo {
+		case 403:
+			content += "，请更新 cookie 后再执行。"
+		}
+		notification.SendPushPlus("【"+appName+"】抽奖失败", content)
 	}
 }

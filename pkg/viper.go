@@ -28,18 +28,12 @@ func Viper(path ...string) *viper.Viper {
 	v := viper.New()
 	v.SetConfigFile(config)
 	v.SetConfigType("yaml")
-	// cfg, err := global.FS.ReadFile("resource/config/config.yaml")
-	// if err != nil {
-	// 	fmt.Printf("您正在使用config的默认值,config的路径为%v, config 读取错误%s\n", config, err)
-	// }
-	// err = v.ReadConfig(bytes.NewBuffer(cfg))
+
 	err := v.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	if err = v.SafeWriteConfig(); err != nil {
-		fmt.Println(err)
-	}
+
 	v.WatchConfig()
 
 	v.OnConfigChange(func(e fsnotify.Event) {
