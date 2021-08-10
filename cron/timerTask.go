@@ -1,6 +1,8 @@
 package cron
 
 import (
+	"log"
+
 	"github.com/yann0917/check-in/extracotrs/juejin"
 	"github.com/yann0917/check-in/pkg/timer"
 )
@@ -51,7 +53,7 @@ func Task() {
 					juejin.CheckIn()
 				})
 				if err != nil {
-					// log.Info("cronTask error:")
+					log.Print(err.Error())
 				}
 
 			}
