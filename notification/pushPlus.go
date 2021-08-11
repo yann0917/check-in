@@ -41,7 +41,6 @@ func SendPushPlus(title, content string) {
 	req.Header.SetMethod(fiber.MethodPost)
 	req.SetRequestURI(url)
 
-	fmt.Println(string(req.Body()))
 	if err := client.Parse(); err != nil {
 		panic(err)
 	}

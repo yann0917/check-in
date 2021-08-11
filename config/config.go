@@ -2,10 +2,16 @@ package config
 
 type Server struct {
 	JueJin       JueJin       `mapstructure:"jue-jin" json:"jue_jin" yaml:"jue-jin"`
+	TieBa        TieBa        `mapstructure:"tie-ba" json:"tie_ba" yaml:"tie-ba"`
 	Notification Notification `mapstructure:"notification" json:"notification" yaml:"notification"`
 }
 
 type JueJin struct {
+	Signature string `mapstructure:"signature" json:"signature" yaml:"signature"`
+	Cookie    string `mapstructure:"cookie" json:"cookie" yaml:"cookie"`
+}
+
+type TieBa struct {
 	Signature string `mapstructure:"signature" json:"signature" yaml:"signature"`
 	Cookie    string `mapstructure:"cookie" json:"cookie" yaml:"cookie"`
 }

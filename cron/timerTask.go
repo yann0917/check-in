@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/yann0917/check-in/extracotrs/juejin"
+	"github.com/yann0917/check-in/extracotrs/tieba"
 	"github.com/yann0917/check-in/pkg/timer"
 )
 
@@ -38,6 +39,7 @@ type timerTask struct {
 
 var taskList = []timerTask{
 	{Name: "JueJinCheckIn", Spec: "@daily", Desc: "每天执行掘金签到"},
+	{Name: "TieBaCheckIn", Spec: "0 0 10 * * *", Desc: "每天上午 10 点执行贴吧签到"},
 }
 
 func init() {
@@ -55,7 +57,13 @@ func Task() {
 				if err != nil {
 					log.Print(err.Error())
 				}
-
+			case "TieBaCheckIn":
+				_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
+					tieba.SignAdd()
+				})
+				if err != nil {
+					log.Print(err.Error())
+				}
 			}
 
 		}(t)

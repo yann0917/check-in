@@ -41,6 +41,7 @@ func NewClient() *fiber.Agent {
 
 	return client
 }
+
 func GetCheckInStatus() bool {
 	client := NewClient()
 	req := client.Request()
