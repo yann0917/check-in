@@ -8,10 +8,14 @@ import (
 )
 
 type Param struct {
-	Token    string `json:"token"`
-	Title    string `json:"title,omitempty"`
-	Content  string `json:"content"`
-	Template string `json:"template,omitempty"` // 消息模板 html,json,cloudMonitor 默认 html
+	Token       string `json:"token"`
+	Title       string `json:"title,omitempty"`
+	Content     string `json:"content"`
+	Template    string `json:"template,omitempty"` // 消息模板 html,json,cloudMonitor 默认 html
+	Topic       string `json:"topic,omitempty"`    // 群组编码，不填仅发送给自己；channel为webhook时无效
+	Channel     string `json:"channel,omitempty"`  // 发送渠道, wechat,webhook,cp 默认 wechat
+	Webhook     string `json:"webhook,omitempty"`
+	CallbackUrl string `json:"callback_url,omitempty"` // 发送结果回调地址
 }
 
 type Response struct {
@@ -21,18 +25,25 @@ type Response struct {
 	Count interface{} `json:"count"`
 }
 
-const url = "http://pushplus.hxtrip.com/send"
-
-type Client struct {
-	Client *fiber.Agent
+type CallbackResp struct {
+	ShortCode  string `json:"shortCode"`  // 消息流水号
+	SendStatus int    `json:"sendStatus"` // 发送状态；0未发送，1发送中，2发送成功，3发送失败
+	Message    string `json:"message"`    // 推送错误内容（如有）
 }
 
+const url = "https://www.pushplus.plus/send"
+
 func SendPushPlus(title, content string) {
+	config := global.Config.Notification.PushPlus
+
 	param := Param{
-		Token:    global.Config.Notification.PushPlus.Token,
-		Title:    title,
-		Content:  content,
-		Template: "html",
+		Token:       config.Token,
+		Title:       title,
+		Content:     content,
+		Template:    config.Template,
+		CallbackUrl: config.Callback,
+		Channel:     config.Channel,
+		Webhook:     config.Webhook,
 	}
 
 	client := global.HttpClient.JSON(param)
@@ -49,5 +60,4 @@ func SendPushPlus(title, content string) {
 	_, body, errs := client.Struct(&resp)
 	fmt.Println(string(body))
 	fmt.Println(errs)
-	fmt.Println(resp.Data)
 }

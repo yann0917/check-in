@@ -29,5 +29,6 @@ func TestGetTbs(t *testing.T) {
 }
 
 func TestCheckIn(t *testing.T) {
-	OneKeySignIn()
+	tbs := GetTbs()
+	OneKeySignIn(tbs.Tbs)
 }

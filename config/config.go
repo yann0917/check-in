@@ -23,7 +23,11 @@ type Notification struct {
 
 // PushPlus Push+ 推送设置
 type PushPlus struct {
-	Token string `mapstructure:"token" json:"token" yaml:"token"`
+	Token    string `mapstructure:"token" json:"token" yaml:"token"`
+	Template string `mapstructure:"template" json:"template" yaml:"template"`
+	Channel  string `mapstructure:"channel" json:"channel" yaml:"channel"`
+	Webhook  string `mapstructure:"webhook" json:"webhook" yaml:"webhook"`
+	Callback string `mapstructure:"callback" json:"callback" yaml:"callback"`
 }
 
 // ServerChan Server酱推送设置
