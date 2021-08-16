@@ -46,7 +46,9 @@ func SendPushPlus(title, content string) {
 		Webhook:     config.Webhook,
 	}
 
-	client := global.HttpClient.JSON(param)
+	client := global.HttpClient.
+		ConnectionClose().
+		JSON(param)
 
 	req := client.Request()
 	req.Header.SetMethod(fiber.MethodPost)
