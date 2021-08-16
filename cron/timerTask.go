@@ -38,7 +38,7 @@ type timerTask struct {
 }
 
 var taskList = []timerTask{
-	{Name: "JueJinCheckIn", Spec: "@daily", Desc: "每天执行掘金签到"},
+	{Name: "JueJinCheckIn", Spec: "1 0 10 * * *", Desc: "每天上午 8 点执行掘金签到"},
 	{Name: "TieBaCheckIn", Spec: "0 0 10 * * *", Desc: "每天上午 10 点执行贴吧签到"},
 }
 
