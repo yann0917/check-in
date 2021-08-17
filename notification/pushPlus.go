@@ -46,9 +46,7 @@ func SendPushPlus(title, content string) {
 		Webhook:     config.Webhook,
 	}
 
-	client := global.HttpClient.
-		ConnectionClose().
-		JSON(param)
+	client := global.HttpClient.JSON(param)
 
 	req := client.Request()
 	req.Header.SetMethod(fiber.MethodPost)
@@ -62,4 +60,5 @@ func SendPushPlus(title, content string) {
 	_, body, errs := client.Struct(&resp)
 	fmt.Println(string(body))
 	fmt.Println(errs)
+	fiber.ReleaseAgent(client)
 }

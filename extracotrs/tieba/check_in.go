@@ -55,6 +55,7 @@ func GetTbs() (resp TbsResp) {
 	// fmt.Println(string(body))
 	_ = json.Unmarshal(body, &resp)
 	fmt.Println(errs)
+	fiber.ReleaseAgent(client)
 	return
 }
 
