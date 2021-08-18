@@ -7,7 +7,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/yann0917/check-in/global"
 	"github.com/yann0917/check-in/notification"
-	"github.com/yann0917/check-in/utils"
 )
 
 const (
@@ -22,24 +21,8 @@ var apis = map[string]string{
 	"check_in":     "/growth_api/v1/check_in" + "?_signature=" + global.Config.JueJin.Signature,
 }
 
-type Client struct {
-	Client *fiber.Agent
-}
-
 func NewClient() *fiber.Agent {
-	client := global.HttpClient
-
-	if cookies, err := utils.ParseCookiesMap(global.Config.JueJin.Cookie); err == nil {
-		for key, val := range cookies {
-			client.Cookie(key, val)
-		}
-	}
-
-	client.ContentType("application/json")
-	client.Referer(referer)
-	client.UserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36")
-
-	return client
+	return global.NewClient(global.Config.JueJin.Cookie, referer)
 }
 
 func GetCheckInStatus() bool {

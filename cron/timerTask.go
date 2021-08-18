@@ -3,6 +3,7 @@ package cron
 import (
 	"log"
 
+	"github.com/yann0917/check-in/extracotrs/bilibili"
 	"github.com/yann0917/check-in/extracotrs/juejin"
 	"github.com/yann0917/check-in/extracotrs/tieba"
 	"github.com/yann0917/check-in/pkg/timer"
@@ -38,8 +39,9 @@ type timerTask struct {
 }
 
 var taskList = []timerTask{
-	{Name: "JueJinCheckIn", Spec: "0 0 8 * * *", Desc: "每天上午 8 点执行掘金签到"},
-	{Name: "TieBaCheckIn", Spec: "0 0 10 * * *", Desc: "每天上午 10 点执行贴吧签到"},
+	{Name: "JueJinCheckIn", Spec: "0 0 8 * * *", Desc: "每天上午 08:00 执行掘金签到"},
+	{Name: "TieBaCheckIn", Spec: "0 0 10 * * *", Desc: "每天上午 10:00 执行贴吧签到"},
+	{Name: "BiliCheckIn", Spec: "0 1 8 * * *", Desc: "每天上午 08:01 执行哔哩哔哩签到"},
 }
 
 func init() {
@@ -60,6 +62,13 @@ func Task() {
 			case "TieBaCheckIn":
 				_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
 					tieba.SignAdd()
+				})
+				if err != nil {
+					log.Print(err.Error())
+				}
+			case "BiliCheckIn":
+				_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
+					bilibili.CheckIn()
 				})
 				if err != nil {
 					log.Print(err.Error())
