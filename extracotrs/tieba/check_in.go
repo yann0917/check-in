@@ -41,10 +41,13 @@ func GetTbs() (resp TbsResp) {
 	}
 
 	_, body, errs := client.Bytes()
-	// fmt.Println(string(body))
-	_ = json.Unmarshal(body, &resp)
+	fmt.Println(string(body))
 	fmt.Println(errs)
-	fiber.ReleaseAgent(client)
+	if len(errs) != 0 {
+		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+		return
+	}
+	_ = json.Unmarshal(body, &resp)
 	return
 }
 
@@ -63,7 +66,10 @@ func GetForumList() (tbs string, list []Forum) {
 
 	_, body, errs := client.Bytes()
 	fmt.Println(errs)
-
+	if len(errs) != 0 {
+		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+		return
+	}
 	// 获取 tbs
 	re := regexp.MustCompile(`<script[\S\s]+?</script>`)
 	scriptList := re.FindAllString(string(body), -1)
@@ -129,7 +135,10 @@ func SignAdd() {
 				_, body, errs := client.Struct(&resp)
 				fmt.Println(string(body))
 				fmt.Println(errs)
-
+				if len(errs) != 0 {
+					notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+					return
+				}
 				data, ok := resp.Data.(*SignAddData)
 				fmt.Println(data)
 
@@ -176,6 +185,10 @@ func OneKeySignIn(tbs string) {
 	fmt.Println(string(body))
 	fmt.Println(errs)
 	// fmt.Println(resp.Data)
+	if len(errs) != 0 {
+		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+		return
+	}
 	data, ok := resp.Data.(*OneKeySignInData)
 
 	if ok && resp.No == 0 {

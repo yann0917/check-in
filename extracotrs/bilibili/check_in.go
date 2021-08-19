@@ -40,6 +40,10 @@ func CheckIn() {
 	fmt.Println(string(body))
 	fmt.Println(errs)
 	// fmt.Println(resp.Data)
+	if len(errs) != 0 {
+		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+		return
+	}
 	data, ok := resp.Data.(*DoSignData)
 
 	if ok && resp.Code == 0 {

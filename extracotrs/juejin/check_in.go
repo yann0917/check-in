@@ -39,6 +39,10 @@ func GetCheckInStatus() bool {
 	_, body, errs := client.Struct(&resp)
 	fmt.Println(string(body))
 	fmt.Println(errs)
+	if len(errs) != 0 {
+		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+		return false
+	}
 	status, ok := resp.Data.(bool)
 	if ok && status {
 		notification.SendPushPlus("【"+appName+"】签到状态", "您今天已经签过到了")
@@ -70,6 +74,10 @@ func CheckIn() {
 	fmt.Println(string(body))
 	fmt.Println(errs)
 	// fmt.Println(resp.Data)
+	if len(errs) != 0 {
+		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+		return
+	}
 	data, ok := resp.Data.(*CheckInData)
 
 	if ok && resp.ErrNo == 0 {
@@ -103,6 +111,10 @@ func LotteryDraw() {
 	fmt.Println(string(body))
 	fmt.Println(errs)
 	// fmt.Println(resp.Data)
+	if len(errs) != 0 {
+		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+		return
+	}
 	data, ok := resp.Data.(*LotteryDrawData)
 
 	if ok && resp.ErrNo == 0 {

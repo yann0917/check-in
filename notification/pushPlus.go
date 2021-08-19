@@ -60,5 +60,4 @@ func SendPushPlus(title, content string) {
 	_, body, errs := client.Struct(&resp)
 	fmt.Println(string(body))
 	fmt.Println(errs)
-	fiber.ReleaseAgent(client)
 }
