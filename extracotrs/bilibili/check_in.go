@@ -2,6 +2,7 @@ package bilibili
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/yann0917/check-in/global"
@@ -47,7 +48,15 @@ func CheckIn() {
 	data, ok := resp.Data.(*DoSignData)
 
 	if ok && resp.Code == 0 {
-		content := data.Text
+		content := "已签到" + strconv.Itoa(data.HadSignDays) + "天，"
+		if data.IsBonusDay == 1 {
+			content += "礼物签到，" + data.Text
+		}
+
+		if data.SpecialText != "" {
+			content += data.SpecialText
+		}
+
 		notification.SendPushPlus("【"+appName+"】签到成功", content)
 	} else {
 		content := resp.Message
