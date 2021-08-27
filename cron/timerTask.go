@@ -50,31 +50,29 @@ func init() {
 
 func Task() {
 	for _, t := range taskList {
-		go func(t timerTask) {
-			switch t.Name {
-			case "JueJinCheckIn":
-				_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
-					juejin.CheckIn()
-				})
-				if err != nil {
-					log.Print(err.Error())
-				}
-			case "TieBaCheckIn":
-				_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
-					tieba.SignAdd()
-				})
-				if err != nil {
-					log.Print(err.Error())
-				}
-			case "BiliCheckIn":
-				_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
-					bilibili.CheckIn()
-				})
-				if err != nil {
-					log.Print(err.Error())
-				}
+		switch t.Name {
+		case "JueJinCheckIn":
+			_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
+				juejin.CheckIn()
+			})
+			if err != nil {
+				log.Print(err.Error())
 			}
+		case "TieBaCheckIn":
+			_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
+				tieba.SignAdd()
+			})
+			if err != nil {
+				log.Print(err.Error())
+			}
+		case "BiliCheckIn":
+			_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
+				bilibili.CheckIn()
+			})
+			if err != nil {
+				log.Print(err.Error())
+			}
+		}
 
-		}(t)
 	}
 }
