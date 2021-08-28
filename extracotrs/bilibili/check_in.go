@@ -51,6 +51,8 @@ func CheckIn() {
 		content := "已签到" + strconv.Itoa(data.HadSignDays) + "天，"
 		if data.IsBonusDay == 1 {
 			content += "礼物签到，" + data.Text
+		} else {
+			content += data.Text
 		}
 
 		if data.SpecialText != "" {

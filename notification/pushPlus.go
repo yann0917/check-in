@@ -1,7 +1,7 @@
 package notification
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/yann0917/check-in/global"
@@ -58,7 +58,7 @@ func SendPushPlus(title, content string) {
 
 	var resp Response
 	_, body, errs := client.Struct(&resp)
-	fmt.Println(string(body))
-	fmt.Println(errs)
+	log.Println(string(body))
+	log.Println(errs)
 	fiber.ReleaseAgent(client)
 }

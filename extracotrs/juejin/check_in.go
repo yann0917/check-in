@@ -1,7 +1,7 @@
 package juejin
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -37,8 +37,8 @@ func GetCheckInStatus() bool {
 
 	var resp Response
 	_, body, errs := client.Struct(&resp)
-	fmt.Println(string(body))
-	fmt.Println(errs)
+	log.Println(string(body))
+	log.Println(errs)
 	if len(errs) != 0 {
 		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
 		return false
@@ -71,8 +71,8 @@ func CheckIn() {
 	resp.Data = new(CheckInData)
 
 	_, body, errs := client.Struct(&resp)
-	fmt.Println(string(body))
-	fmt.Println(errs)
+	log.Println(string(body))
+	log.Println(errs)
 	// fmt.Println(resp.Data)
 	if len(errs) != 0 {
 		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
@@ -108,8 +108,8 @@ func LotteryDraw() {
 	resp.Data = new(LotteryDrawData)
 
 	_, body, errs := client.Struct(&resp)
-	fmt.Println(string(body))
-	fmt.Println(errs)
+	log.Println(string(body))
+	log.Println(errs)
 	// fmt.Println(resp.Data)
 	if len(errs) != 0 {
 		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())

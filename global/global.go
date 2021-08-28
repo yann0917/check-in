@@ -16,7 +16,7 @@ func init() {
 }
 
 func NewClient(cookie, referer string) *fiber.Agent {
-	client := HttpClient
+	client := HttpClient.Debug()
 
 	if cookies, err := utils.ParseCookiesMap(cookie); err == nil {
 		for key, val := range cookies {

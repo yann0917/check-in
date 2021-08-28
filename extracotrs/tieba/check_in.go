@@ -2,7 +2,7 @@ package tieba
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 
@@ -41,8 +41,8 @@ func GetTbs() (resp TbsResp) {
 	}
 
 	_, body, errs := client.Bytes()
-	fmt.Println(string(body))
-	fmt.Println(errs)
+	log.Println(string(body))
+	log.Println(errs)
 	if len(errs) != 0 {
 		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
 		return
@@ -65,7 +65,7 @@ func GetForumList() (tbs string, list []Forum) {
 	}
 
 	_, body, errs := client.Bytes()
-	fmt.Println(errs)
+	log.Println(errs)
 	if len(errs) != 0 {
 		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
 		return
@@ -133,14 +133,14 @@ func SignAdd() {
 				resp.Data = new(SignAddData)
 
 				_, body, errs := client.Struct(&resp)
-				fmt.Println(string(body))
-				fmt.Println(errs)
+				log.Println(string(body))
+				log.Println(errs)
 				if len(errs) != 0 {
 					notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
 					return
 				}
-				data, ok := resp.Data.(*SignAddData)
-				fmt.Println(data)
+				_, ok := resp.Data.(*SignAddData)
+				// fmt.Println(data)
 
 				if ok && resp.No == 0 {
 					total++
@@ -182,9 +182,8 @@ func OneKeySignIn(tbs string) {
 	resp.Data = new(OneKeySignInData)
 
 	_, body, errs := client.Struct(&resp)
-	fmt.Println(string(body))
-	fmt.Println(errs)
-	// fmt.Println(resp.Data)
+	log.Println(string(body))
+	log.Println(errs)
 	if len(errs) != 0 {
 		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
 		return
