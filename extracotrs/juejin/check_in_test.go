@@ -17,3 +17,7 @@ func TestMain(m *testing.M) {
 func TestGetCheckInStatus(t *testing.T) {
 	GetCheckInStatus()
 }
+
+func TestCheckIn(t *testing.T) {
+	CheckIn()
+}

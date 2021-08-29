@@ -1,10 +1,9 @@
 package bilibili
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/yann0917/check-in/global"
 	"github.com/yann0917/check-in/notification"
 )
@@ -19,35 +18,48 @@ var apis = map[string]string{
 	"check_in": "/sign/doSign",
 }
 
-func NewClient() *fiber.Agent {
+func NewClient() *global.Client {
 	return global.NewClient(global.Config.Bilibili.Cookie, referer)
 }
 
 func CheckIn() {
 
 	client := NewClient()
-	req := client.Request()
-	req.Header.SetMethod(fiber.MethodGet)
-	req.SetRequestURI(host + apis["check_in"])
-
-	if err := client.Parse(); err != nil {
-		panic(err)
-	}
-
-	var resp Response
-	resp.Data = new(DoSignData)
-
-	_, body, errs := client.Struct(&resp)
-	fmt.Println(string(body))
-	fmt.Println(errs)
-	// fmt.Println(resp.Data)
-	if len(errs) != 0 {
-		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+	resp, err := client.Get(host+apis["check_in"], client.Headers)
+	if err != nil {
+		notification.SendPushPlus("【"+appName+"】签到失败", err.Error())
 		return
 	}
-	data, ok := resp.Data.(*DoSignData)
+	var result Response
+	err = resp.ToJSON(&result)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(resp.Dump())
 
-	if ok && resp.Code == 0 {
+	log.Println(result)
+	//
+	// req := client.Request()
+	// req.Header.SetMethod(fiber.MethodGet)
+	// req.SetRequestURI(host + apis["check_in"])
+	//
+	// if err := client.Parse(); err != nil {
+	// 	panic(err)
+	// }
+	//
+	// var resp Response
+	// resp.Data = new(DoSignData)
+	//
+	// _, body, errs := client.Struct(&resp)
+	// fmt.Println(string(body))
+	// fmt.Println(errs)
+	// fmt.Println(resp.Data)
+	//
+
+	data, ok := result.Data.(*DoSignData)
+
+	if ok && result.Code == 0 {
 		content := "已签到" + strconv.Itoa(data.HadSignDays) + "天，"
 		if data.IsBonusDay == 1 {
 			content += "礼物签到，" + data.Text
@@ -61,8 +73,8 @@ func CheckIn() {
 
 		notification.SendPushPlus("【"+appName+"】签到成功", content)
 	} else {
-		content := resp.Message
-		switch resp.Code {
+		content := result.Message
+		switch result.Code {
 		case -101:
 			content += "，请更新 cookie 后再执行。"
 		}

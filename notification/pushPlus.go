@@ -3,7 +3,7 @@ package notification
 import (
 	"log"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/imroc/req"
 	"github.com/yann0917/check-in/global"
 )
 
@@ -46,19 +46,21 @@ func SendPushPlus(title, content string) {
 		Webhook:     config.Webhook,
 	}
 
-	client := global.HttpClient.JSON(param)
+	body := req.BodyJSON(param)
 
-	req := client.Request()
-	req.Header.SetMethod(fiber.MethodPost)
-	req.SetRequestURI(url)
-
-	if err := client.Parse(); err != nil {
-		panic(err)
+	resp, err := global.NewClient("", "").Post(url, body)
+	if err != nil {
+		log.Println(err)
+		return
 	}
-
-	var resp Response
-	_, body, errs := client.Struct(&resp)
-	log.Println(string(body))
-	log.Println(errs)
-	fiber.ReleaseAgent(client)
+	log.Println(resp.ToString())
+	// var result Response
+	// err = resp.ToJSON(&result)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	return
+	// }
+	// // log.Println(resp.Dump())
+	//
+	// log.Println(result)
 }

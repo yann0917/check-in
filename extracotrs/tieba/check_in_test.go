@@ -25,7 +25,8 @@ func TestSignAdd(t *testing.T) {
 }
 
 func TestGetTbs(t *testing.T) {
-	GetTbs()
+	tbs := GetTbs()
+	t.Log(tbs)
 }
 
 func TestCheckIn(t *testing.T) {

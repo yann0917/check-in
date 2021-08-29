@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/imroc/req"
 	"github.com/yann0917/check-in/global"
 	"github.com/yann0917/check-in/notification"
 )
@@ -23,31 +23,18 @@ var apis = map[string]string{
 	"tbs":          "http://tieba.baidu.com/dc/common/tbs",
 }
 
-func NewClient() *fiber.Agent {
+func NewClient() *global.Client {
 	return global.NewClient(global.Config.TieBa.Cookie, referer)
 }
 
 // GetTbs get tbs
 func GetTbs() (resp TbsResp) {
 	client := NewClient()
-	client.ContentType(fiber.MIMETextHTML)
-	client.Add(fiber.HeaderUpgradeInsecureRequests, "1")
-	req := client.Request()
-	req.Header.SetMethod(fiber.MethodGet)
-	req.SetRequestURI(apis["tbs"])
-
-	if err := client.Parse(); err != nil {
-		panic(err)
+	response, err := client.Get(apis["tbs"], client.Headers)
+	if err != nil {
+		notification.SendPushPlus("【"+appName+"】签到失败", err.Error())
 	}
-
-	_, body, errs := client.Bytes()
-	log.Println(string(body))
-	log.Println(errs)
-	if len(errs) != 0 {
-		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
-		return
-	}
-	_ = json.Unmarshal(body, &resp)
+	err = response.ToJSON(&resp)
 	return
 }
 
@@ -55,21 +42,13 @@ func GetTbs() (resp TbsResp) {
 func GetForumList() (tbs string, list []Forum) {
 
 	client := NewClient()
-	req := client.Request()
-	client.ContentType(fiber.MIMETextHTML)
-	req.Header.SetMethod(fiber.MethodGet)
-	req.SetRequestURI(host)
-
-	if err := client.Parse(); err != nil {
-		panic(err)
-	}
-
-	_, body, errs := client.Bytes()
-	log.Println(errs)
-	if len(errs) != 0 {
-		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+	resp, err := client.Get(host, client.Headers)
+	if err != nil {
+		notification.SendPushPlus("【"+appName+"】签到失败", err.Error())
 		return
 	}
+
+	body := resp.Bytes()
 	// 获取 tbs
 	re := regexp.MustCompile(`<script[\S\s]+?</script>`)
 	scriptList := re.FindAllString(string(body), -1)
@@ -113,36 +92,33 @@ func SignAdd() {
 	} else {
 		for _, forum := range list {
 			if forum.IsSign == 0 {
+
 				client := NewClient()
-				args := fiber.AcquireArgs()
-				args.Set("ie", "utf-8")
-				args.Set("kw", forum.ForumName)
-				args.Set("tbs", tbs)
-				client.Form(args)
-				fiber.ReleaseArgs(args)
 
-				req := client.Request()
-				req.Header.SetMethod(fiber.MethodPost)
-				req.SetRequestURI(host + apis["sign_add"])
-
-				if err := client.Parse(); err != nil {
-					panic(err)
+				param := req.Param{
+					"ie":  "utf-8",
+					"kw":  forum.ForumName,
+					"tbs": tbs,
 				}
 
-				var resp Response
-				resp.Data = new(SignAddData)
-
-				_, body, errs := client.Struct(&resp)
-				log.Println(string(body))
-				log.Println(errs)
-				if len(errs) != 0 {
-					notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+				resp, err := client.Post(host+apis["sign_add"], param)
+				if err != nil {
+					notification.SendPushPlus("【"+appName+"】签到失败", err.Error())
 					return
 				}
-				_, ok := resp.Data.(*SignAddData)
-				// fmt.Println(data)
 
-				if ok && resp.No == 0 {
+				var result Response
+				err = resp.ToJSON(&result)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+
+				log.Println(result)
+
+				_, ok := result.Data.(*SignAddData)
+
+				if ok && result.No == 0 {
 					total++
 				}
 			}
@@ -163,41 +139,36 @@ func OneKeySignIn(tbs string) {
 	// }
 
 	client := NewClient()
-
-	args := fiber.AcquireArgs()
-	args.Set("ie", "utf-8")
-	args.Set("tbs", tbs)
-	client.Form(args)
-	fiber.ReleaseArgs(args)
-
-	req := client.Request()
-	req.Header.SetMethod(fiber.MethodPost)
-	req.SetRequestURI(host + apis["one_key_sign"])
-
-	if err := client.Parse(); err != nil {
-		panic(err)
+	param := req.Param{
+		"ie":  "utf-8",
+		"tbs": tbs,
 	}
 
-	var resp Response
-	resp.Data = new(OneKeySignInData)
-
-	_, body, errs := client.Struct(&resp)
-	log.Println(string(body))
-	log.Println(errs)
-	if len(errs) != 0 {
-		notification.SendPushPlus("【"+appName+"】签到失败", errs[0].Error())
+	resp, err := client.Post(host+apis["one_key_sign"], param)
+	if err != nil {
+		notification.SendPushPlus("【"+appName+"】签到失败", err.Error())
 		return
 	}
-	data, ok := resp.Data.(*OneKeySignInData)
 
-	if ok && resp.No == 0 {
+	var result Response
+	err = resp.ToJSON(&result)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	log.Println(result)
+
+	data, ok := result.Data.(*OneKeySignInData)
+
+	if ok && result.No == 0 {
 		content := "已经签到 " + strconv.Itoa(data.SignedForumAmount) +
 			" 个吧，未签到 " + strconv.Itoa(data.UnsignedForumAmount) +
 			" 个吧，本次签到共加经验：" + strconv.Itoa(data.GradeNoVip)
 		notification.SendPushPlus("【"+appName+"】签到成功", content)
 	} else {
-		content := resp.Error
-		switch resp.No {
+		content := result.Error
+		switch result.No {
 		case 403:
 			content += "，请更新 cookie 后再执行。"
 		}
