@@ -108,6 +108,7 @@ func SignAdd() {
 				}
 
 				var result Response
+				result.Data = new(SignAddData)
 				err = resp.ToJSON(&result)
 				if err != nil {
 					log.Println(err)

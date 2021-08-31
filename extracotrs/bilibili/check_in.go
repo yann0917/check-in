@@ -31,12 +31,13 @@ func CheckIn() {
 		return
 	}
 	var result Response
+	result.Data = new(DoSignData)
 	err = resp.ToJSON(&result)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	log.Println(resp.Dump())
+	// log.Println(resp.Dump())
 
 	log.Println(result)
 	//
