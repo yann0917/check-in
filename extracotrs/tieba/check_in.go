@@ -2,6 +2,7 @@ package tieba
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -77,6 +78,7 @@ func GetForumList() (tbs string, list []Forum) {
 func SignAdd() {
 
 	tbs, list := GetForumList()
+	// fmt.Println(list)
 	total, levelUpper7 := 0, 0
 
 	for _, forum := range list {
@@ -108,18 +110,18 @@ func SignAdd() {
 				}
 
 				var result Response
-				result.Data = new(SignAddData)
+				// result.Data = new(SignAddData)
 				err = resp.ToJSON(&result)
 				if err != nil {
 					log.Println(err)
 					return
 				}
-
 				log.Println(result)
-
-				_, ok := result.Data.(*SignAddData)
-
-				if ok && result.No == 0 {
+				if result.No == 1990055 {
+					notification.SendPushPlus("【"+appName+"】签到失败", result.Error)
+					return
+				}
+				if result.No == 0 {
 					total++
 				}
 			}
@@ -159,6 +161,7 @@ func OneKeySignIn(tbs string) {
 	}
 
 	log.Println(result)
+	fmt.Printf("%#v\n", result.Data)
 
 	data, ok := result.Data.(*OneKeySignInData)
 
@@ -170,7 +173,9 @@ func OneKeySignIn(tbs string) {
 	} else {
 		content := result.Error
 		switch result.No {
-		case 403:
+		case 110001:
+			content += "，请勿重复签到。"
+		case 1990055:
 			content += "，请更新 cookie 后再执行。"
 		}
 		notification.SendPushPlus("【"+appName+"】签到失败", content)
