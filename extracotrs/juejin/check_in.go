@@ -51,10 +51,10 @@ func GetCheckInStatus() bool {
 
 func CheckIn() {
 
-	// status := GetCheckInStatus()
-	// if status {
-	// 	return
-	// }
+	status := GetCheckInStatus()
+	if status {
+		return
+	}
 
 	client := NewClient()
 	resp, err := client.Post(host+apis["check_in"], client.Headers)
@@ -97,6 +97,7 @@ func LotteryDraw() {
 	}
 
 	var result Response
+	result.Data = new(LotteryDrawData)
 	err = resp.ToJSON(&result)
 	if err != nil {
 		log.Println(err)

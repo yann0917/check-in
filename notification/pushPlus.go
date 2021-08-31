@@ -31,7 +31,7 @@ type CallbackResp struct {
 	Message    string `json:"message"`    // 推送错误内容（如有）
 }
 
-const url = "https://www.pushplus.plus/send"
+const url = "http://www.pushplus.plus/send"
 
 func SendPushPlus(title, content string) {
 	config := global.Config.Notification.PushPlus

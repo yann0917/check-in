@@ -37,26 +37,8 @@ func CheckIn() {
 		log.Println(err)
 		return
 	}
-	// log.Println(resp.Dump())
 
 	log.Println(result)
-	//
-	// req := client.Request()
-	// req.Header.SetMethod(fiber.MethodGet)
-	// req.SetRequestURI(host + apis["check_in"])
-	//
-	// if err := client.Parse(); err != nil {
-	// 	panic(err)
-	// }
-	//
-	// var resp Response
-	// resp.Data = new(DoSignData)
-	//
-	// _, body, errs := client.Struct(&resp)
-	// fmt.Println(string(body))
-	// fmt.Println(errs)
-	// fmt.Println(resp.Data)
-	//
 
 	data, ok := result.Data.(*DoSignData)
 
