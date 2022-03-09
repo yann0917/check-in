@@ -2,7 +2,9 @@ package juejin
 
 import (
 	"log"
+	"math/rand"
 	"strconv"
+	"time"
 
 	"github.com/yann0917/check-in/global"
 	"github.com/yann0917/check-in/notification"
@@ -50,13 +52,18 @@ func GetCheckInStatus() bool {
 }
 
 func CheckIn() {
+	client := NewClient()
+	// 先访问首页
+	client.Get(referer)
 
 	status := GetCheckInStatus()
 	if status {
 		return
 	}
 
-	client := NewClient()
+	num := rand.Int31n(10)
+	time.Sleep(time.Duration(num) * time.Second)
+
 	resp, err := client.Post(host+apis["check_in"], client.Headers)
 	if err != nil {
 		notification.SendPushPlus("【"+appName+"】签到失败", err.Error())
@@ -89,6 +96,8 @@ func CheckIn() {
 }
 
 func LotteryDraw() {
+	num := rand.Int31n(10)
+	time.Sleep(time.Duration(num) * time.Second)
 	client := NewClient()
 	resp, err := client.Post(host+apis["lottery_draw"], client.Headers)
 	if err != nil {
