@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/yann0917/check-in/extracotrs/bilibili"
+	"github.com/yann0917/check-in/extracotrs/countdown"
 	"github.com/yann0917/check-in/extracotrs/juejin"
 	"github.com/yann0917/check-in/extracotrs/tieba"
 	"github.com/yann0917/check-in/pkg/timer"
@@ -42,6 +43,7 @@ var taskList = []timerTask{
 	{Name: "JueJinCheckIn", Spec: "0 1 8 * * *", Desc: "每天上午 08:01 执行掘金签到"},
 	// {Name: "TieBaCheckIn", Spec: "0 0 10 * * *", Desc: "每天上午 10:00 执行贴吧签到"},
 	{Name: "BiliCheckIn", Spec: "0 2 8 * * *", Desc: "每天上午 08:02 执行哔哩哔哩签到"},
+	{Name: "CountdownDays", Spec: "0 0 6 * * *", Desc: "每天上午 06:00 执行纪念日提醒"},
 }
 
 func init() {
@@ -68,6 +70,13 @@ func Task() {
 		case "BiliCheckIn":
 			_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
 				bilibili.CheckIn()
+			})
+			if err != nil {
+				log.Print(err.Error())
+			}
+		case "CountdownDays":
+			_, err := task.AddTaskByFunc(t.Name, t.Spec, func() {
+				countdown.CalcDays()
 			})
 			if err != nil {
 				log.Print(err.Error())

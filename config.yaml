@@ -6,6 +6,11 @@ tie-ba:
 bilibili:
     cookie: buvid3=5D4CA391-8C61-65A1-D146-3DC494C8BBFD40465infoc; i-wanna-go-back=-1; _uuid=10F82F5CF-DD75-A224-869F-2C5B9639D36740938infoc; buvid4=359D1AB6-12D2-A795-EC01-EC5150D2726166121-022021109-/jcg52HUDTROYpOIH73t5g==; nostalgia_conf=-1; buvid_fp_plain=undefined; CURRENT_BLACKGAP=0; blackside_state=1; rpdid=|(k|k~YkJ~RY0J'uYR~YYu)~J; CURRENT_FNVAL=4048; LIVE_BUVID=AUTO4416484708935638; innersign=0; b_ut=7; b_lsid=244B6556_17FE95EF3DA; fingerprint=454ac5c102599af68558bb398e4ed4c4; SESSDATA=52394454,1664439816,af92a*41; bili_jct=8d846ab55be604d396f85415fece96b5; DedeUserID=3604722; DedeUserID__ckMd5=1818cbc97fd3272b; sid=9898yl11; _dfcaptcha=66412df440452c185ec23c96b2345e17; PVID=2; buvid_fp=454ac5c102599af68558bb398e4ed4c4
 
+countdown-days:
+    list:
+       - {name: 闺女出生, date: 2022-09-16, remark:  }
+       - {name: 驾驶证有效期, date: 2029-05-31, remark:  }
+      
 notification:
     push-plus:
         token: 0787bab863f84f02ab3c5a1510336e66

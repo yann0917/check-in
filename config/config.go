@@ -1,10 +1,13 @@
 package config
 
+import "time"
+
 type Server struct {
-	JueJin       JueJin       `mapstructure:"jue-jin" json:"jue_jin" yaml:"jue-jin"`
-	TieBa        TieBa        `mapstructure:"tie-ba" json:"tie_ba" yaml:"tie-ba"`
-	Bilibili     Bilibili     `mapstructure:"bilibili" json:"bilibili" yaml:"bilibili"`
-	Notification Notification `mapstructure:"notification" json:"notification" yaml:"notification"`
+	JueJin        JueJin        `mapstructure:"jue-jin" json:"jue_jin" yaml:"jue-jin"`
+	TieBa         TieBa         `mapstructure:"tie-ba" json:"tie_ba" yaml:"tie-ba"`
+	Bilibili      Bilibili      `mapstructure:"bilibili" json:"bilibili" yaml:"bilibili"`
+	Notification  Notification  `mapstructure:"notification" json:"notification" yaml:"notification"`
+	CountdownDays CountdownDays `mapstructure:"countdown-days" json:"countdown_days" yaml:"countdown-days"`
 }
 
 type JueJin struct {
@@ -39,4 +42,14 @@ type PushPlus struct {
 // FIXME: 方糖服务号推送可能被腾讯弃用
 type ServerChan struct {
 	SendKey string `mapstructure:"send-key" json:"send_key" yaml:"send-key"`
+}
+
+type CountdownDays struct {
+	List []Day `mapstructure:"list" json:"list" yaml:"list"`
+}
+
+type Day struct {
+	Name   string    `mapstructure:"name" json:"name" yaml:"name"`
+	Date   time.Time `mapstructure:"date" json:"date" yaml:"date"`
+	Remark string    `mapstructure:"remark" json:"remark" yaml:"remark"`
 }
