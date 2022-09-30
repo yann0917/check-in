@@ -36,6 +36,7 @@ type PushPlus struct {
 	Channel  string `mapstructure:"channel" json:"channel" yaml:"channel"`
 	Webhook  string `mapstructure:"webhook" json:"webhook" yaml:"webhook"`
 	Callback string `mapstructure:"callback" json:"callback" yaml:"callback"`
+	Topic    string `mapstructure:"topic" json:"topic" yaml:"topic"` // 群组编码，不填仅发送给自己；channel为webhook时无效
 }
 
 // ServerChan Server酱推送设置

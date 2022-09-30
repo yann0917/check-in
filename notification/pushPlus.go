@@ -44,6 +44,7 @@ func SendPushPlus(title, content string) {
 		CallbackUrl: config.Callback,
 		Channel:     config.Channel,
 		Webhook:     config.Webhook,
+		Topic:       config.Topic,
 	}
 
 	body := req.BodyJSON(param)
